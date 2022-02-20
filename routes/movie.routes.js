@@ -6,6 +6,7 @@ const auth = require('../middleware/auth')
 
 router.get('/', auth, MovieController.index)
 router.get('/get_active', MovieController.getActive)
+router.get('/get_last', MovieController.getLast)
 router.post('/', auth, MovieController.store)
 router.get('/:id', MovieController.show)
 router.get('/play_video/:id', MovieController.playVideo)
