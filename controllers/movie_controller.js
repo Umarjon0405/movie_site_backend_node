@@ -1,12 +1,18 @@
-const { User, Category, MovieCategory, Type, MoviePath, Movie } = require("../models")
+const {Type, MoviePath, Movie } = require("../models")
 const { sequelize } = require("../models")
-const { response } = require('express')
 const Joi = require('@hapi/joi');
-const { Op, DataTypes } = require("sequelize");
+const { Op } = require("sequelize");
 const PG = require('../services/paginate')
 const fs = require("fs");
+const url = require('url');
 
 module.exports.index = async (req, res) => {
+    const queryObject = url.parse(req.url, true).query;
+    let type_id = queryObject.type_id;
+    let search = queryObject.search || '';
+    let check = 0
+    check = type_id > 0 ?  {type_id: type_id} : {}
+    
     try {
         const movies = await Movie.findAll({
             include: [
@@ -21,6 +27,7 @@ module.exports.index = async (req, res) => {
             attributes: {
                 exclude :['type_id']
             },
+            where:{ title: { [Op.like]: `%${search}%` }, ...check},
             order: [
                 ['id', 'DESC']
             ],
@@ -32,6 +39,11 @@ module.exports.index = async (req, res) => {
     }
 }
 module.exports.getActive = async (req, res) => {
+    const queryObject = url.parse(req.url, true).query;
+    let type_id = queryObject.type_id;
+    let search = queryObject.search || '';
+    let check = 0
+    check = type_id > 0 ?  {type_id: type_id} : {}
     try {
         const movies = await Movie.findAll({
             include: [
@@ -46,7 +58,7 @@ module.exports.getActive = async (req, res) => {
             attributes: {
                 exclude :['type_id']
             },
-            where: {active: true},
+            where: {active: true, ...check,  title: { [Op.like]: `%${search}%` },},
             order: [
                 ['id', 'DESC']
             ],
