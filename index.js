@@ -33,7 +33,7 @@ app.use('/login', auth_routes);
 
 // for movies
 app.use('/api/movies', movie_routes);
-app.use('/api/types', auth, type_routes);
+app.use('/api/types', type_routes);
 // app.use('/api/categories', auth, category_routes);
 
 // for user
