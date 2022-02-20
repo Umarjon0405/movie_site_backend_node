@@ -38,6 +38,33 @@ module.exports.index = async (req, res) => {
         return res.json(error).status(400)
     }
 }
+module.exports.getLast = async (req, res) => {
+    
+    try {
+        const movies = await Movie.findAll({
+            include: [
+                {
+                    model: Type,
+                    as: 'type',
+                    required: true,
+                    attributes: ['id', 'title']
+                }
+
+            ],
+            attributes: {
+                exclude :['type_id']
+            },
+            limit: 5,
+            order: [
+                ['id', 'DESC']
+            ],
+        })
+
+        return res.json({data: movies}).status(200)
+    } catch (error) {
+        return res.json(error).status(400)
+    }
+}
 module.exports.getActive = async (req, res) => {
     const queryObject = url.parse(req.url, true).query;
     let type_id = queryObject.type_id;
